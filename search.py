@@ -8,7 +8,7 @@ class Bili:
     def __init__(self, bid, email):
         self.query_sql = 'select * from Up'
         self.friends_url = 'https://api.bilibili.com/x/relation/' \
-                           'followings?vmid={}&pn=1&ps=20&or' \
+                           'followings?vmid={}&pn=1&ps=50&or' \
                            'der=desc&jsonp=jsonp&callback=__jp6'.format(bid)
         self.headers = {
             'referer': "https://space.bilibili.com/{}".format(bid),
