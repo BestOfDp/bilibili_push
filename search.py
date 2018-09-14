@@ -7,8 +7,12 @@ from contextlib import contextmanager
 class Bili:
     def __init__(self, bid, email):
         self.query_sql = 'select * from Up'
+        """
+        pn: 第几页
+        ps: 一页有多少数据
+        """
         self.friends_url = 'https://api.bilibili.com/x/relation/' \
-                           'followings?vmid={}&pn=1&ps=20&or' \
+                           'followings?vmid={}&pn=1&ps=50&or' \
                            'der=desc&jsonp=jsonp&callback=__jp6'.format(bid)
         self.headers = {
             'referer': "https://space.bilibili.com/{}".format(bid),
@@ -17,8 +21,9 @@ class Bili:
         }
         self.up_url = "https://space.bilibili.com/ajax/member/ge" \
                       "tSubmitVideos?mid={}&page=1&pagesize=1"
-        self.old_friends = {}
-        self.new_friends = {}
+        self.old_friends = {}  # 这是数据库查出来的
+        self.new_friends = {}  # 这个是请求API的，
+        # 后面两者对比，可以得到新关注的,也可以得到你取关的
         self.email_message = []
         self.email = email
 
@@ -30,9 +35,10 @@ class Bili:
             database='bilibili',
             charset='utf8'
         )
+        # 游标
         self.cursor = self.conn.cursor()
-        self.cursor.execute(self.query_sql)
-        self.old_friends_data = self.cursor.fetchall()
+        self.cursor.execute(self.query_sql)  # 执行 self.query_sql语句
+        self.old_friends_data = self.cursor.fetchall()  # 拿到数据
         for id, title, author, created in self.old_friends_data:
             self.old_friends[id] = [id, title, author, created]
         return self
@@ -60,6 +66,8 @@ class Bili:
         if len(self.email_message) != 0:
             self._send_email()
 
+    # 有两个列表，一个是请求下来的，一个是数据库查询出来的
+    # 比对 created
     def _judge_is_new(self):
         for key, value in self.old_friends.items():
             if not self.new_friends.__contains__(key):
@@ -70,31 +78,32 @@ class Bili:
                 self.new_friends.pop(key)
         self._add_new_friends()
 
+    # 删除不关注的up主
     def _delete_friend(self, mid):
         with self._auto_commit():
             delete_sql = 'delete from Up WHERE id={}'.format(mid)
             self.cursor.execute(delete_sql)
 
+    # 添加新的up主
     def _add_new_friends(self):
         with self._auto_commit():
             for id, title, author, created in self.new_friends.values():
-                insert_sql = "insert into Up VALUES ({},'{}','{}','{}')".format(id, title, author, created)
-                self.cursor.execute(insert_sql)
+                insert_sql = "insert into Up VALUES (%s,%s,%s,%s)"
+                self.cursor.execute(insert_sql, (id, title, author, created))
 
+    # 更新信息，并且发邮件
     def _update_friends(self, value):
         with self._auto_commit():
-            update_sql = "update Up set " \
-                         "title='{}'," \
-                         "author='{}'," \
-                         "created='{}'" \
-                         "WHERE id={}".format(value[1], value[2], value[3], value[0])
-            self.cursor.execute(update_sql)
+            update_sql = "update Up set title=%s,author=%s,created=%s WHERE id=%s"
+            self.cursor.execute(update_sql, (value[1], value[2], value[3], value[0]))
             self.email_message.append(value)
 
+    # 得到关注列表
     def _get_friends(self):
         data = requests.get(self.friends_url, headers=self.headers)
         return json.loads(data.text[6:-1])
 
+    # 发邮件
     def _send_email(self):
         data = list(zip(*self.email_message))
         msg = '更新了！\n'
