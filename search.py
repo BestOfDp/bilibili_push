@@ -39,8 +39,8 @@ class Bili:
         self.cursor = self.conn.cursor()
         self.cursor.execute(self.query_sql)  # 执行 self.query_sql语句
         self.old_friends_data = self.cursor.fetchall()  # 拿到数据
-        for id, title, author, created in self.old_friends_data:
-            self.old_friends[id] = [id, title, author, created]
+        for id, title, author, aid in self.old_friends_data:
+            self.old_friends[id] = [id, title, author, aid]
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -60,14 +60,14 @@ class Bili:
             info = info['data']['vlist']
             if info:
                 title = info[0]['title']
-                created = info[0]['created']
-                self.new_friends[mid] = [mid, title, uname, str(created)]
+                aid = info[0]['aid']
+                self.new_friends[mid] = [mid, title, uname, str(aid)]
         self._judge_is_new()
         if len(self.email_message) != 0:
             self._send_email()
 
     # 有两个列表，一个是请求下来的，一个是数据库查询出来的
-    # 比对 created
+    # 比对 aid
     def _judge_is_new(self):
         for key, value in self.old_friends.items():
             if not self.new_friends.__contains__(key):
@@ -87,14 +87,14 @@ class Bili:
     # 添加新的up主
     def _add_new_friends(self):
         with self._auto_commit():
-            for id, title, author, created in self.new_friends.values():
+            for id, title, author, aid in self.new_friends.values():
                 insert_sql = "insert into Up VALUES (%s,%s,%s,%s)"
-                self.cursor.execute(insert_sql, (id, title, author, created))
+                self.cursor.execute(insert_sql, (id, title, author, aid))
 
     # 更新信息，并且发邮件
     def _update_friends(self, value):
         with self._auto_commit():
-            update_sql = "update Up set title=%s,author=%s,created=%s WHERE id=%s"
+            update_sql = "update Up set title=%s,author=%s,aid=%s WHERE id=%s"
             self.cursor.execute(update_sql, (value[1], value[2], value[3], value[0]))
             self.email_message.append(value)
 
@@ -127,5 +127,5 @@ class Bili:
 
 
 if __name__ == '__main__':
-    with Bili('你的bid', '你的email') as b:
+    with Bili('xxx', 'xxx') as b:
         b.run()
