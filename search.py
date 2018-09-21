@@ -1,6 +1,7 @@
 import json
 import requests
 import pymysql
+import operator
 from contextlib import contextmanager
 
 
@@ -73,7 +74,7 @@ class Bili:
             if not self.new_friends.__contains__(key):
                 self._delete_friend(value[0])
             else:
-                if value[3] != self.new_friends[key][3]:
+                if not operator.eq(value[3], self.new_friends[key][3]):
                     self._update_friends(self.new_friends[key])
                 self.new_friends.pop(key)
         self._add_new_friends()
