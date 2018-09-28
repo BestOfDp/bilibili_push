@@ -10,10 +10,10 @@ class Bili:
         self.query_sql = 'select * from Up'
         """
         pn: 第几页
-        ps: 一页有多少数据
+        ps: 一页有多少数据(B站默认为一页25)
         """
         self.friends_url = 'https://api.bilibili.com/x/relation/' \
-                           'followings?vmid={}&pn=1&ps=50&or' \
+                           'followings?vmid={}&pn={}&ps=25&or' \
                            'der=desc&jsonp=jsonp&callback=__jp6'.format(bid)
         self.headers = {
             'referer': "https://space.bilibili.com/{}".format(bid),
