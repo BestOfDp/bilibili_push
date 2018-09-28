@@ -3,20 +3,21 @@ import requests
 import pymysql
 import operator
 from contextlib import contextmanager
+from config import Config
 
 
 class Bili:
-    def __init__(self, bid, email):
+    def __init__(self):
         self.query_sql = 'select * from Up'
         """
         pn: 第几页
         ps: 一页有多少数据(B站默认为一页25)
         """
         self.friends_url = 'https://api.bilibili.com/x/relation/' \
-                           'followings?vmid={}&pn={}&ps=25&or' \
-                           'der=desc&jsonp=jsonp&callback=__jp6'.format(bid)
+                           'followings?vmid={}&pn={}&ps={}&or' \
+                           'der=desc&jsonp=jsonp&callback=__jp6'
         self.headers = {
-            'referer': "https://space.bilibili.com/{}".format(bid),
+            'referer': "https://space.bilibili.com/{}".format(Config.BID),
             'User-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit'
                           '/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36'
         }
@@ -26,13 +27,13 @@ class Bili:
         self.new_friends = {}  # 这个是请求API的，
         # 后面两者对比，可以得到新关注的,也可以得到你取关的
         self.email_message = []
-        self.email = email
+        self.email = Config.EMAIL
 
     def __enter__(self):
         self.conn = pymysql.connect(
-            host='xxx',
-            user='xxx',
-            password='xxx',
+            host=Config.MYSQL_HOST,
+            user=Config.MYSQL_USER,
+            password=Config.MYSQL_PASSWORD,
             database='bilibili',
             charset='utf8'
         )
@@ -52,7 +53,7 @@ class Bili:
         return True
 
     def run(self):
-        friends = self._get_friends()['data']['list']
+        friends = self._get_friends()
         for friend in friends:
             mid = friend['mid']
             uname = friend['uname']
@@ -95,14 +96,26 @@ class Bili:
     # 更新信息，并且发邮件
     def _update_friends(self, value):
         with self._auto_commit():
+            print(value)
             update_sql = "update Up set title=%s,author=%s,aid=%s WHERE id=%s"
             self.cursor.execute(update_sql, (value[1], value[2], value[3], value[0]))
             self.email_message.append(value)
 
     # 得到关注列表
     def _get_friends(self):
-        data = requests.get(self.friends_url, headers=self.headers)
-        return json.loads(data.text[6:-1])
+        friends = []
+        for i in range(1, 5):
+            data = requests.get(self.friends_url.format(Config.BID, i, 50), headers=self.headers)
+            data = json.loads(data.text[6:-1])
+            friends.append(data)
+            if len(data['data']['list']) != 50 or len(data['data']['list']) == 0:
+                break
+        friends = [friend['data']['list'] for friend in friends]
+        data = []
+        for friend in friends:
+            for each in friend:
+                data.append(each)
+        return data
 
     # 发邮件
     def _send_email(self):
@@ -115,7 +128,9 @@ class Bili:
             'title': title,
             'to': self.email
         }
-        requests.post('http://xxx/send_email/', data=json.dumps(post_data))
+        requests.post('http://{}{}'.format(
+            Config.EMAIL_SERVER_IP, Config.EMAIL_SERVER_URL),
+            data=json.dumps(post_data))
 
     @contextmanager
     def _auto_commit(self):
@@ -128,5 +143,5 @@ class Bili:
 
 
 if __name__ == '__main__':
-    with Bili('xxx', 'xxx') as b:
+    with Bili() as b:
         b.run()
