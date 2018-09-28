@@ -104,7 +104,7 @@ class Bili:
     # 得到关注列表
     def _get_friends(self):
         friends = []
-        for i in range(1, 5):
+        for i in range(1, 6):
             data = requests.get(self.friends_url.format(Config.BID, i, 50), headers=self.headers)
             data = json.loads(data.text[6:-1])
             friends.append(data)
