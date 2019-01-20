@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户信息</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='layui-v2.4.3/layui/css/layui.css') }}" media="all">
+</head>
+<body bgcolor="#F2F2F2">
+<div style="padding: 20px;margin: 0 auto">
+    <div style="margin-left: 25%;width: 50%">
+        <div class="layui-card">
+            <div class="layui-card-header"><span style="font-size: 30px">帐号信息</span></div>
+            <div class="layui-card-body">
+                <span style="font-size: 18px">帐号用户名:{{ info['account'] }}</span><br>
+                <span style="font-size: 18px">帐号密码:123456</span><br>
+                <span style="font-size: 18px">比赛地址:<a href="https://cn.vjudge.net/contest/263094"
+                                                      target="view_window"
+                                                      style="color: #2D93CA">https://cn.vjudge.net/contest/263094</a></span><br>
+                <span style="font-size: 18px">比赛密码:lsuacm</span><br>
+            </div>
+        </div>
+    </div>
+    <div style="margin-left: 25%;width: 50%;margin-top: 1%">
+        <div class="layui-card">
+            <div class="layui-card-header"><span style="font-size: 30px">个人信息</span></div>
+            <div class="layui-card-body">
+                <span style="font-size: 18px">班级:{{ info['classname'] }}</span><br>
+                <span style="font-size: 18px">姓名:{{ info['username'] }}</span><br>
+                <span style="font-size: 18px">学号:{{ info['school_id'] }}</span><br>
+                <span style="font-size: 18px">qq号:{{ info['qq'] }}</span><br>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
