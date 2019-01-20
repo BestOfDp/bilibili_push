@@ -14,3 +14,38 @@
  title：标题
  msg：内容
  to：收件人
+ 
+ 
+# flask_lib_spider
+
+用flask写的爬取学校图书馆的书籍数据接口，传入书籍id即可
+
+# image_maker
+
+maker.py为入口文件，具体功能就是生成表情包（需要传入模版图）
+
+# lsu_final_exam_result
+
+爬取学校期末考试成绩，传入姓名和学号即可
+
+# lsu_login
+python 模拟登陆方正系统教育系统
+
+login_code 是存登录时候的验证码的文件
+
+train
+ image 训练集
+ cnn_dama.py 训练文件
+ check.py 识别验证码
+ ok.h5 训练好的模型
+
+# vjudge_auto_register
+## Vjudge注册（10-16）
+register里面是自动注册帐号的(需要手动输入验证码)
+## 分发帐号（10-17）
+程序在getAccount包里面
+用flask写的后台，直接用模版了，没分离。而且还是用的单文件，接受到的信息，直接存json文件了，这样方便。
+## update
+根据新生填写的表单得到的json文件，来修改vjudge账号的信息（用户名等）
+
+
