@@ -41,9 +41,9 @@ train
 
 # mybatis_tools
 二次mybatis逆向工程生成的实体类,Dao层,XML文件
-## 实体类加上@Data注解，继承PageHelper（XML分页）
-## Dao层加上Component注解
-## XML加上分页sql语句
+1:实体类加上@Data注解，继承PageHelper（XML分页）
+2:Dao层加上Component注解
+3:XML加上分页sql语句
 # vjudge_auto_register
 ### Vjudge注册（10-16）
 register里面是自动注册帐号的(需要手动输入验证码)
