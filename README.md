@@ -47,6 +47,10 @@ train
 2.Dao层加上Component注解
 
 3.XML加上分页sql语句
+
+## 2019-02-13
+Mybatis逆向工程生成的实体类默认对应关系
+数据库类型 tinyint -> Byte 二次处理成 Integer
 # vjudge_auto_register
 ### Vjudge注册（10-16）
 register里面是自动注册帐号的(需要手动输入验证码)
