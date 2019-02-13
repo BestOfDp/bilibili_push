@@ -20,18 +20,17 @@ class MybatisGen:
         self._set_variable(config, "entity", "javaModelGenerator")
         self._set_variable(config, "dao", "javaClientGenerator")
         self._set_variable(config, "mapper", "sqlMapGenerator")
-		
-		# 实体类
+
         self._add_annotation_lombok()
-		# Dao层
         self._add_annotation_component()
-		# xml
         self._add_mapper_xml()
 
     # lombok模块
     def _annotation_data(self, path):
         content = self._read_file_to_str(path)
         data = "import lombok.Data;\n\n@Data\n"
+        if content.find("Short") != -1:
+            data = "import lombok.Data;\nimport java.math.BigDecimal;\n@Data\n"
         index = content.find(str(data.split(";")[0]))
         if index == -1:
             public_index = content.find("public")
@@ -41,7 +40,7 @@ class MybatisGen:
     def _update_type(self, path):
         content = self._read_file_to_str(path)
         content = content.replace("Byte", "Integer")
-        content = content.replace("Short", "Integer")
+        content = content.replace("Short", "BigDecimal")
         self._write_str_to_file(path, content)
 
     def _extend_page_helper(self, path):
@@ -73,12 +72,9 @@ class MybatisGen:
         list = os.listdir(file_path)
         for i in list:
             if not i.split(".")[0].endswith("Example"):
-				# 添加Data
                 self._annotation_data(file_path + "/" + i)
-				# 把Byte Short 转成 Integer
                 self._update_type(file_path + "/" + i)
             else:
-				# .*Example 继承 PageHelper
                 self._extend_page_helper(file_path + "/" + i)
 
         print("添加Data注解成功！")
