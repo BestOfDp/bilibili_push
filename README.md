@@ -1,4 +1,4 @@
-# bilibili_push
+# 1.bilibili_push
 小爬虫——b站up主更新视频推送
 
 创建的时候，传入两个参数，bid——你的B站id，email——你能收到的邮箱
@@ -16,19 +16,19 @@
  to：收件人
  
  
-# flask_lib_spider
+# 2.flask_lib_spider
 
 用flask写的爬取学校图书馆的书籍数据接口，传入书籍id即可
 
-# image_maker
+# 3.image_maker
 
 maker.py为入口文件，具体功能就是生成表情包（需要传入模版图）
 
-# lsu_final_exam_result
+# 4.lsu_final_exam_result
 
 爬取学校期末考试成绩，传入姓名和学号即可
 
-# lsu_login
+# 5.lsu_login
 python 模拟登陆方正系统教育系统
 
 login_code 是存登录时候的验证码的文件
@@ -39,7 +39,7 @@ train
  check.py 识别验证码
  ok.h5 训练好的模型
 
-# mybatis_tools
+# 6.mybatis_tools
 二次处理mybatis逆向工程生成的实体类,Dao层,XML文件
 
 1.实体类加上@Data注解，继承PageHelper（XML分页）
@@ -51,7 +51,7 @@ train
 ## 2019-02-13
 Mybatis逆向工程生成的实体类默认对应关系
 数据库类型 tinyint -> Byte 二次处理成 Integer
-# vjudge_auto_register
+# 7.vjudge_auto_register
 ### Vjudge注册（10-16）
 register里面是自动注册帐号的(需要手动输入验证码)
 ### 分发帐号（10-17）
